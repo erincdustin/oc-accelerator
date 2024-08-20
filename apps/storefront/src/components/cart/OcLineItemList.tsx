@@ -23,19 +23,9 @@ const OcLineItemList: FunctionComponent<OcLineItemListProps> = ({
   lineItems,
   onChange,
 }) => {
-  const brands: string[] = useMemo(() => {
-    const supplierIDs = lineItems
-      ?.map((item) => item.Product?.DefaultSupplierID)
-      .filter((id): id is string => !!id);
-
-    return Array.from(new Set(supplierIDs));
-  }, [lineItems]);
 
   return lineItems && lineItems.length ? (
     <VStack gap={6} alignItems="flex-start" w="full">
-      {brands?.map((brand) => {
-        return (
-          <React.Fragment key={brand}>
             <Card
               variant="outline"
               w="full"
@@ -46,7 +36,6 @@ const OcLineItemList: FunctionComponent<OcLineItemListProps> = ({
             >
               <CardBody display="flex" flexDirection="column" gap={2}>
                 {lineItems
-                  ?.filter((li) => li.Product?.DefaultSupplierID === brand)
                   .map((li, idx) => (
                     <OcLineItemCard
                       key={idx}
@@ -57,9 +46,6 @@ const OcLineItemList: FunctionComponent<OcLineItemListProps> = ({
                   ))}
               </CardBody>
             </Card>
-          </React.Fragment>
-        );
-      })}
     </VStack>
   ) : (
     <Text alignSelf="flex-start">{emptyMessage}</Text>

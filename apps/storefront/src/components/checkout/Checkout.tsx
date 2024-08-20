@@ -16,15 +16,14 @@ import {
 } from "@chakra-ui/react";
 import { Cart, LineItem, Order, RequiredDeep } from "ordercloud-javascript-sdk";
 import { useCallback, useEffect, useState } from "react";
-import { Link, Link as RouterLink, useNavigate } from "react-router-dom";
 import formatPrice from "../../utils/formatPrice";
-import OcCurrentOrderLineItemList from "./OcCurrentOrderLineItemList";
+import { useNavigate } from "react-router-dom";
 
-export const ShoppingCart = (): JSX.Element => {
+export const Checkout = (): JSX.Element => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [lineItems, setLineItems] = useState<LineItem[]>();
   const [order, setOrder] = useState<RequiredDeep<Order>>();
-  const navigate = useNavigate();
 
   const getOrder = useCallback(async () => {
     const result = await Cart.Get();
@@ -38,14 +37,6 @@ export const ShoppingCart = (): JSX.Element => {
     setLoading(false);
   }, [order]);
 
-  const deleteOrder = useCallback(async () => {
-    if (!order?.ID) return;
-    await Cart.Delete();
-
-    setOrder(undefined);
-    setLineItems(undefined);
-  }, [order]);
-
   useEffect(() => {
     getOrder();
   }, [getOrder]);
@@ -54,32 +45,26 @@ export const ShoppingCart = (): JSX.Element => {
     getLineItems();
   }, [order, getLineItems]);
 
-  const handleLineItemChange = useCallback(
-    (newLi: LineItem) => {
-      setLineItems((items) => {
-        return items?.map((li) => {
-          if (li.ID === newLi.ID) {
-            return newLi;
-          }
-          return li;
-        });
-      });
-    },
-    [setLineItems]
-  );
+  const submitOrder = useCallback(async () => {
+    if (!order?.ID) return;
+    try {
+      await Cart.Submit();
+      navigate("/order-summary");
+    } catch (err) {
+      console.log(err);
+    }
+  }, [navigate, order?.ID]);
 
   return loading ? (
     <Center h="100%">
       <Spinner size="xl" thickness="10px" />
     </Center>
-  ) : ( 
+  ) : (
     <SimpleGrid
-    gridTemplateColumns={
-      lineItems && { lg: "3fr 1fr" }
-    }
-    width="full"
-    gap={6}
-  >
+      gridTemplateColumns={lineItems && { lg: "3fr 1fr" }}
+      width="full"
+      gap={6}
+    >
       <VStack
         flexGrow="1"
         alignItems="flex-start"
@@ -96,41 +81,32 @@ export const ShoppingCart = (): JSX.Element => {
           as={VStack}
           alignItems="flex-start"
         >
-          <Heading size="lg" color="chakra-subtle-text">
-            Cart
+          <Heading size="md" color="chakra-subtle-text">
+            Shipping
           </Heading>
-          <HStack
+          <Card
             w="full"
-            justifyContent="space-between"
-            borderBottom="1px solid"
-            pb={4}
-            mb={4}
-            borderColor="chakra-border-color"
+            minH="200"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
           >
-            <Button variant="link" as={RouterLink} to="/products" size="xs">
-              Continue shopping
-            </Button>
-            {lineItems?.length !== 0 && (
-              <Button
-                type="button"
-                onClick={deleteOrder}
-                variant="outline"
-                size="xs"
-              >
-                Clear cart
-              </Button>
-            )}
-          </HStack>
-          {lineItems?.length !== 0 ? (
-            <OcCurrentOrderLineItemList
-              lineItems={lineItems}
-              emptyMessage="Your cart is empty"
-              onChange={handleLineItemChange}
-              editable
-            />
-          ) : (
-            <Spinner />
-          )}
+            <Text fontFamily="monospace" textTransform="uppercase">
+              shipping address form here
+            </Text>
+          </Card>
+          <Heading size="md" color="chakra-subtle-text" mt={8}>
+            Payment
+          </Heading>
+          <Card
+            w="full"
+            minH="200"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Text fontFamily="monospace">IFRAME EMBED GOES HERE</Text>
+          </Card>
         </Container>
       </VStack>
       <VStack
@@ -143,7 +119,6 @@ export const ShoppingCart = (): JSX.Element => {
         minW="container.md"
       >
         <Container w="full" mx={0} maxW="container.lg" pr={{ xl: "24" }}>
-          {/* Cart Summary  */}
           {lineItems && (
             <Card
               order={{ base: -1, lg: 1 }}
@@ -182,15 +157,14 @@ export const ShoppingCart = (): JSX.Element => {
                 </>
                 <Button
                   mt="auto"
-                  as={Link}
-                  to={'/checkout'}
+                  onClick={submitOrder}
                   size={{ base: "sm", lg: "lg" }}
                   fontSize="lg"
                   colorScheme="primary"
                   w={{ lg: "full" }}
                   _hover={{ textDecoration: "none" }}
                 >
-                  Proceed to Checkout
+                  Submit
                 </Button>
               </CardBody>
             </Card>
