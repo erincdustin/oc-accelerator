@@ -18,10 +18,11 @@ interface OcQuantityInputProps {
   controlId: string;
   priceSchedule?: PriceSchedule;
   productId?: string;
-  label?: string;
-  disabled?: boolean;
-  quantity: number;
-  onChange: (quantity: number) => void;
+  label?: string
+  disabled?: boolean
+  quantity: number
+  onChange: (quantity: number) => void
+  size?: string;
 }
 
 const OcQuantityInput: FunctionComponent<OcQuantityInputProps> = ({
@@ -31,6 +32,7 @@ const OcQuantityInput: FunctionComponent<OcQuantityInputProps> = ({
   disabled,
   quantity,
   onChange,
+  size
 }) => {
   const { data } = useOcResourceGet(
     "Me.Products",
@@ -64,7 +66,7 @@ const OcQuantityInput: FunctionComponent<OcQuantityInputProps> = ({
       {ps?.RestrictedQuantity ? (
         <Select
           maxW="100"
-          size="sm"
+          size={size || "sm"}
           id={controlId}
           isDisabled={disabled}
           value={quantity}
@@ -79,7 +81,7 @@ const OcQuantityInput: FunctionComponent<OcQuantityInputProps> = ({
       ) : (
         <NumberInput
           maxW="100"
-          size="sm"
+          size={size || "sm"}
           value={quantity || ""}
           defaultValue={quantity}
           onChange={handleNumberInputChange}

@@ -122,8 +122,18 @@ const ProductList: FunctionComponent<ProductListProps> = ({ renderItem }) => {
 
   if (isLoading) {
     return (
-      <Center h="50vh">
-        <Spinner size="xl" />
+      <Center h="75vh">
+        <Spinner thickness="10px" size="xl" color="secondary.300" />
+      </Center>
+    );
+  }
+
+  if (data?.Items && data.Items.length === 0) {
+    return (
+      <Center h="75vh">
+        <Heading as="h2" size="md">
+          No products found
+        </Heading>
       </Center>
     );
   }
@@ -187,13 +197,6 @@ const ProductList: FunctionComponent<ProductListProps> = ({ renderItem }) => {
             </React.Fragment>
           ))}
         </SimpleGrid>
-        {data?.Items?.length === 0 && (
-          <Center h="20vh">
-            <Heading as="h2" size="md">
-              No products found
-            </Heading>
-          </Center>
-        )}
       </Grid>
 
       {data?.Meta?.TotalPages && data?.Meta?.TotalPages > 1 && (

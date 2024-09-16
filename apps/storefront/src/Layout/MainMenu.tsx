@@ -83,7 +83,7 @@ const MainMenu: FC<MainMenuProps> = ({ loginDisclosure }) => {
                   key={catalog.ID}
                   onClick={() => setSelectedCatalog(catalog.ID)}
                   as={RouterLink}
-                  to={`/shop/${catalog.ID}/products`}
+                  to={`/shop/${catalog.ID}`}
                 >
                   {catalog.Name}
                 </MenuItem>
@@ -96,7 +96,7 @@ const MainMenu: FC<MainMenuProps> = ({ loginDisclosure }) => {
       return (
         <Button
           as={RouterLink}
-          to={`/shop/${catalogs[0].ID}/products`}
+          to={`/shop/${catalogs[0].ID}`}
           variant="ghost"
         >
           Shop All Products

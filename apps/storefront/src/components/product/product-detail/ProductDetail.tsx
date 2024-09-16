@@ -21,15 +21,15 @@ import {
 import pluralize from "pluralize";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { IS_MULTI_LOCATION_INVENTORY } from "../../constants";
-import formatPrice from "../../utils/formatPrice";
-import OcQuantityInput from "../cart/OcQuantityInput";
-import ProductImageGallery from "./product-detail/ProductImageGallery";
 import {
   useOcResourceGet,
   useOcResourceList,
   useShopper,
 } from "@rwatt451/ordercloud-react";
+import { IS_MULTI_LOCATION_INVENTORY } from "../../../constants";
+import ProductImageGallery from "./ProductImageGallery";
+import formatPrice from "../../../utils/formatPrice";
+import OcQuantityInput from "../../cart/OcQuantityInput";
 
 export interface ProductDetailProps {
   productId: string;
@@ -127,7 +127,15 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
         });
       }
     }
-  }, [product, activeRecordId, productId, toast, addCartLineItem, quantity, navigate]);
+  }, [
+    product,
+    activeRecordId,
+    productId,
+    toast,
+    addCartLineItem,
+    quantity,
+    navigate,
+  ]);
 
   return loading ? (
     <Center h="50vh">
@@ -152,20 +160,57 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
           <Text color="chakra-subtle-text" fontSize="sm">
             {product.ID}
           </Text>
-          <Text maxW="prose">{product.Description}</Text>
-          <Text fontSize="3xl" fontWeight="medium">
-            {formatPrice(product?.PriceSchedule?.PriceBreaks?.[0].Price)}
-          </Text>
-          <HStack alignItems="center" gap={4} my={3}>
+          <Text maxW="2xl">{product.Description}</Text>
+          {product?.PriceSchedule?.IsOnSale ? (
+            <VStack alignItems="flex-start">
+              <HStack>
+                <Text fontSize="4xl" fontWeight="light" color="red.500">
+                  -
+                  {Math.round(
+                    (((product?.PriceSchedule?.PriceBreaks?.[0]?.Price ?? 0) -
+                      (product?.PriceSchedule?.PriceBreaks?.[0]?.SalePrice ??
+                        0)) /
+                      (product?.PriceSchedule?.PriceBreaks?.[0]?.Price ?? 1)) *
+                      100
+                  )}
+                  %
+                </Text>
+
+                <Text fontSize="4xl" fontWeight="semibold">
+                  {formatPrice(
+                    product?.PriceSchedule?.PriceBreaks?.[0].SalePrice
+                  )}
+                </Text>
+              </HStack>
+              <Text
+                fontSize="xs"
+                color="chakra-placeholder-color"
+                fontWeight="medium"
+                textDecoration="line-through"
+              >
+                {formatPrice(product?.PriceSchedule?.PriceBreaks?.[0].Price)}
+              </Text>
+            </VStack>
+          ) : (
+            <Text fontSize="3xl" fontWeight="semibold">
+              {formatPrice(product?.PriceSchedule?.PriceBreaks?.[0].Price)}
+            </Text>
+          )}
+
+          <HStack alignItems="center" gap={4} my={2}>
             <Button
               colorScheme="primary"
               type="button"
+              size="lg"
+              px="8"
+              fontSize="lg"
               onClick={handleAddToCart}
               isDisabled={addingToCart || outOfStock}
             >
               {outOfStock ? "Out of stock" : "Add To Cart"}
             </Button>
             <OcQuantityInput
+              size="lg"
               controlId="addToCart"
               priceSchedule={product.PriceSchedule}
               quantity={quantity}

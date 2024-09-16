@@ -25,28 +25,26 @@ import React, {
   useState,
 } from "react";
 import { TbPhoto } from "react-icons/tb";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useLocation } from "react-router-dom";
 import useDebounce from "../../hooks/useDebounce";
 import formatPrice from "../../utils/formatPrice";
 import OcQuantityInput from "./OcQuantityInput";
 import { useShopper } from "@rwatt451/ordercloud-react";
-import { TABS } from "./ShoppingCart";
 
 interface OcLineItemCardProps {
   lineItem: LineItem;
   editable?: boolean;
   onChange?: (newLi: LineItem) => void;
-  tabIndex?: number;
 }
 
 const OcLineItemCard: FunctionComponent<OcLineItemCardProps> = ({
   lineItem,
   editable,
   onChange,
-  tabIndex,
 }) => {
   const [quantity, setQuantity] = useState(lineItem.Quantity);
   const { patchCartLineItem, deleteCartLineItem } = useShopper()
+  const { pathname } = useLocation();
 
   const debouncedQuantity: number = useDebounce(quantity, 300);
 
@@ -118,7 +116,7 @@ const OcLineItemCard: FunctionComponent<OcLineItemCardProps> = ({
               position="absolute"
             />
           </Center>
-          {tabIndex !== TABS.CONFIRMATION && (
+          {pathname !== "/order-confirmation" && (
             <Button
               size="xs"
               fontSize=".75rem"
@@ -131,7 +129,7 @@ const OcLineItemCard: FunctionComponent<OcLineItemCardProps> = ({
           )}
         </VStack>
         <VStack alignItems="flex-start" gap={3} flexGrow="1">
-          <Link as={RouterLink} to={`/products/${lineItem?.Product?.ID}`}>
+          <Link as={RouterLink} to={`/shop/${lineItem?.Product?.ID}`}>
             <Text fontSize="sm" lineHeight="1.3" display="inline-block">
               {lineItem.Product?.Name}
             </Text>
