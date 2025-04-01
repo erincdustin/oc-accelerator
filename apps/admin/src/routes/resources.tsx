@@ -1,8 +1,8 @@
 import { IndexRouteObject, NonIndexRouteObject } from 'react-router-dom'
-import ResourceList from '../components/ResourceList/ResourceList'
-import { ResourceDetailWithParams } from '../components/ResourceDetail/ResourceDetail'
-import AssignmentList from '../components/AssignmentList/AssignmentList'
-import ResourceAssignment from '../components/ResourceAssignment/ResourceAssignment'
+import ResourceList from '../components/resource-list/ResourceList'
+import { ResourceDetailWithParams } from '../components/resource-detail/ResourceDetail'
+import AssignmentList from '../components/assignment-list/AssignmentList'
+import ResourceAssignment from '../components/resource-assignment/ResourceAssignment'
 
 interface IndexResourceRoute extends IndexRouteObject {
   label?: string

@@ -2,8 +2,8 @@ import { RouteObject } from 'react-router-dom'
 import { resources } from './resources'
 import { omit } from 'lodash'
 import { NotFoundPage } from '../404'
-import Dashboard from '../components/Dashboard/Dashboard'
-import Layout from '../components/Layout/Layout'
+import Dashboard from '../components/dashboard/Dashboard'
+import Layout from '../components/layout/Layout'
 
 const resourceRoutes: RouteObject[] = resources.map((r) => omit(r, 'label') as RouteObject)
 
